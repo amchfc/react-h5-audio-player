@@ -11,6 +11,7 @@ interface ProgressBarForwardRefProps {
   onSeek?: OnSeek
   onChangeCurrentTimeError?: () => void
   i18nProgressBar: string
+  darkMode: boolean
 }
 interface ProgressBarProps extends ProgressBarForwardRefProps {
   progressBar: React.RefObject<HTMLDivElement>
@@ -210,7 +211,7 @@ class ProgressBar extends Component<ProgressBarProps, ProgressBarState> {
   }
 
   render(): React.ReactNode {
-    const { showDownloadProgress, showFilledProgress, progressBar, i18nProgressBar } = this.props
+    const { showDownloadProgress, showFilledProgress, progressBar, i18nProgressBar, darkMode } = this.props
     const { currentTimePos, downloadProgressArr, hasDownloadProgressAnimation } = this.state
 
     return (
@@ -228,8 +229,8 @@ class ProgressBar extends Component<ProgressBarProps, ProgressBarState> {
         onContextMenu={this.handleContextMenu}
       >
         <div className={`rhap_progress-bar ${showDownloadProgress ? 'rhap_progress-bar-show-download' : ''}`}>
-          <div className="rhap_progress-indicator" style={{ left: currentTimePos }} />
-          {showFilledProgress && <div className="rhap_progress-filled" style={{ width: currentTimePos }} />}
+          <div className={`rhap_progress-indicator ${darkMode ? 'rhap_progress_dark' : 'rhap_progress_light'}`} style={{ left: currentTimePos }} />
+          {showFilledProgress && <div className={`rhap_progress-filled ${darkMode ? 'rhap_progress_dark' : 'rhap_progress_light'}`} style={{ width: currentTimePos }} />}
           {showDownloadProgress &&
             downloadProgressArr.map(({ left, width }, i) => (
               <div

@@ -120,6 +120,8 @@ interface PlayerProps {
   i18nAriaLabels?: I18nAriaLabels
   children?: ReactNode
   style?: CSSProperties
+  darkMode: boolean
+  accentColor: string
 }
 
 interface CustomIcons {
@@ -389,12 +391,14 @@ class H5AudioPlayer extends Component<PlayerProps> {
       loop: loopProp,
       mse,
       i18nAriaLabels,
+      darkMode,
+      accentColor
     } = this.props
 
     switch (comp) {
       case RHAP_UI.CURRENT_TIME:
         return (
-          <div key={key} id="rhap_current-time" className="rhap_time rhap_current-time">
+          <div key={key} id="rhap_current-time" className={`rhap_time rhap_current-time ${darkMode ? 'rhap_controls_dark' : 'rhap_controls_light'}`}>
             <CurrentTime
               audio={this.audio.current}
               isLeftTime={false}
@@ -405,7 +409,7 @@ class H5AudioPlayer extends Component<PlayerProps> {
         )
       case RHAP_UI.CURRENT_LEFT_TIME:
         return (
-          <div key={key} id="rhap_current-left-time" className="rhap_time rhap_current-left-time">
+          <div key={key} id="rhap_current-left-time" className={`rhap_time rhap_current-left-time ${darkMode ? 'rhap_controls_dark' : 'rhap_controls_light'}`}>
             <CurrentTime
               audio={this.audio.current}
               isLeftTime={true}
@@ -427,11 +431,12 @@ class H5AudioPlayer extends Component<PlayerProps> {
             onChangeCurrentTimeError={onChangeCurrentTimeError}
             srcDuration={mse && mse.srcDuration}
             i18nProgressBar={i18nAriaLabels.progressControl}
+            darkMode={darkMode}
           />
         )
       case RHAP_UI.DURATION:
         return (
-          <div key={key} className="rhap_time rhap_total-time">
+          <div key={key} className={`rhap_time rhap_total-time ${darkMode ? 'rhap_controls_dark' : 'rhap_controls_light'}`}>
             {mse && mse.srcDuration ? (
               getDisplayTimeBySeconds(mse.srcDuration, mse.srcDuration, this.props.timeFormat)
             ) : (
@@ -478,6 +483,7 @@ class H5AudioPlayer extends Component<PlayerProps> {
             <button
               aria-label={isPlaying ? i18nAriaLabels.pause : i18nAriaLabels.play}
               className="rhap_button-clear rhap_main-controls-button rhap_play-pause-button"
+              style={{color: accentColor}}
               type="button"
               onClick={this.togglePlay}
             >
@@ -719,11 +725,13 @@ class H5AudioPlayer extends Component<PlayerProps> {
       customControlsSection,
       children,
       style,
+      darkMode,
       i18nAriaLabels,
     } = this.props
     const loop = this.audio.current ? this.audio.current.loop : loopProp
     const loopClass = loop ? 'rhap_loop--on' : 'rhap_loop--off'
     const isPlayingClass = this.isPlaying() ? 'rhap_play-status--playing' : 'rhap_play-status--paused'
+    const darkModeClass = darkMode ? 'dark_container' : 'light_container'
 
     return (
       /* We want the container to catch bubbled events */
@@ -733,7 +741,7 @@ class H5AudioPlayer extends Component<PlayerProps> {
         /* eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex */
         tabIndex={0}
         aria-label={i18nAriaLabels.player}
-        className={`rhap_container ${loopClass} ${isPlayingClass} ${className}`}
+        className={`rhap_container ${loopClass} ${isPlayingClass} ${className} ${darkModeClass}`}
         onKeyDown={this.handleKeyDown}
         ref={this.container}
         style={style}
